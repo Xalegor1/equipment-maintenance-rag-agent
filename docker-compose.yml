@@ -1,3 +1,5 @@
+name: isppr-maintenance
+
 services:
   postgres:
     image: pgvector/pgvector:pg16

@@ -1,6 +1,8 @@
 """Сборка ReAct-агента на базе LangChain AgentExecutor."""
 from __future__ import annotations
 
+from datetime import date
+
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import BaseTool
@@ -18,7 +20,8 @@ def build_agent(tools: list[BaseTool], settings: Settings) -> AgentExecutor:
         max_retries=settings.openai_max_retries,
         request_timeout=30,
     )
-    prompt = PromptTemplate.from_template(REACT_PROMPT)
+    prompt_text = REACT_PROMPT.replace("__TODAY__", date.today().isoformat())
+    prompt = PromptTemplate.from_template(prompt_text)
     # create_react_agent добавляет stop=["\nObservation"], чтобы модель не «дописывала»
     # наблюдения за инструменты (важно для надёжности gpt-4o-mini).
     agent = create_react_agent(llm, tools, prompt)

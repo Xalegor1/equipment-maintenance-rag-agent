@@ -55,6 +55,15 @@ def test_query_equipment_found():
     assert "в эксплуатации" in out
 
 
+def test_query_equipment_strips_quotes():
+    repo = MagicMock()
+    repo.get_by_id.return_value = None
+    _, query_db = _tools(repo=repo)
+    query_db.func("'ТМ-630/10-2'")
+    # кавычки сняты перед запросом в БД
+    repo.get_by_id.assert_called_once_with("ТМ-630/10-2")
+
+
 def test_query_equipment_not_found():
     repo = MagicMock()
     repo.get_by_id.return_value = None

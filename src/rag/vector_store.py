@@ -51,6 +51,11 @@ class PgVectorStore:
     def is_loaded(self) -> bool:
         return self._is_ready
 
+    @staticmethod
+    def _vec_literal(vector: list[float]) -> str:
+        # pgvector принимает текстовый литерал вида "[0.1,0.2,...]" с явным ::vector
+        return "[" + ",".join(map(str, vector)) + "]"
+
     def add_documents(self, chunks: list[Document], doc_id: str | None = None) -> None:
         texts = [c.page_content for c in chunks]
         vectors_data = self._embedder.embed_documents(texts)
@@ -64,8 +69,9 @@ class PgVectorStore:
                 doc_id or "",
                 chunk.metadata.get("source", ""),
                 int(chunk.metadata.get("page", 0)),
-                chunk.page_content,
-                vector,
+                # PostgreSQL text не допускает NUL-байты (встречаются в тексте PDF)
+                chunk.page_content.replace("\x00", ""),
+                self._vec_literal(vector),
             )
             for i, (chunk, vector) in enumerate(zip(chunks, vectors_data))
         ]
@@ -75,7 +81,7 @@ class PgVectorStore:
                 cur.executemany(
                     """
                     INSERT INTO document_chunks (id, doc_id, source, page, text, embedding)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s::vector)
                     ON CONFLICT (id) DO UPDATE
                         SET text = EXCLUDED.text,
                             embedding = EXCLUDED.embedding,
@@ -94,15 +100,15 @@ class PgVectorStore:
     def similarity_search_with_score(
         self, query: str, k: int = 4
     ) -> list[tuple[Document, float]]:
-        query_vector = self._embedder.embed_query(query)
+        query_vector = self._vec_literal(self._embedder.embed_query(query))
 
         with self._pool.connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT text, source, page, (1 - (embedding <=> %s)) AS score
+                    SELECT text, source, page, (1 - (embedding <=> %s::vector)) AS score
                     FROM document_chunks
-                    ORDER BY embedding <=> %s
+                    ORDER BY embedding <=> %s::vector
                     LIMIT %s
                     """,
                     (query_vector, query_vector, k),

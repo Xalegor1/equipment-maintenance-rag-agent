@@ -84,7 +84,7 @@ def test_add_documents_row_fields(mock_store):
     assert len(row) == 6
     assert row[2] == "test.pdf"          # source
     assert row[4].startswith("Фрагмент")  # text
-    assert len(row[5]) == 1536            # embedding
+    assert isinstance(row[5], str) and row[5].startswith("[")  # vector-литерал
 
 
 def test_add_documents_id_differs_by_source(mock_store):

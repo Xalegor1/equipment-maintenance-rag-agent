@@ -39,13 +39,15 @@ def make_tools(
         """Данные о единице оборудования по идентификатору (например 'ТМ-630/10-2'):
         тип, дата ввода в эксплуатацию, дата последнего осмотра, статус, расположение.
         Вызывай ПЕРВЫМ, если в запросе упомянут идентификатор оборудования."""
+        # LLM иногда оборачивает аргумент в кавычки — снимаем их
+        clean_id = equipment_id.strip().strip("'\"").strip()
         try:
-            rec = equipment_repo.get_by_id(equipment_id.strip())
+            rec = equipment_repo.get_by_id(clean_id)
         except psycopg.Error as exc:  # реальная ошибка БД — пробрасываем наверх
             raise AgentDatabaseError(str(exc)) from exc
 
         if rec is None:
-            return f"Оборудование с идентификатором '{equipment_id}' не найдено в базе."
+            return f"Оборудование с идентификатором '{clean_id}' не найдено в базе."
 
         return (
             f"Идентификатор: {rec.equipment_id}\n"
