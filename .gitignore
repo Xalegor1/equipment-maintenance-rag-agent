@@ -1,0 +1,42 @@
+# Secrets
+.env
+
+# Vector store and ML artifacts
+mlruns/
+data/raw/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg
+
+# Coverage
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+
+# venv 
+.venv/
+
+# docs
+docs/
+
+# Images
+images/
+
+# faiss_index
+faiss_index/
