@@ -12,6 +12,9 @@ class EmbeddingModel:
             openai_api_key=settings.openai_api_key.get_secret_value(),
             max_retries=settings.openai_max_retries,
             timeout=30,
+            # число фрагментов в одном запросе к OpenAI: маленький батч, чтобы
+            # большие документы не превышали лимит токенов на запрос (300k)
+            chunk_size=100,
         )
 
     @classmethod
