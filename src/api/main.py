@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.agent.service import AgentService
 from src.api.routes.agent import router as agent_router
+from src.api.routes.documents import router as documents_router
 from src.api.routes.equipment import router as equipment_router
 from src.api.routes.health import router as health_router
 from src.api.routes.ingest import router as ingest_router
@@ -69,6 +70,7 @@ def create_app() -> FastAPI:
     app.include_router(query_router, prefix="/api/v1")
     app.include_router(agent_router, prefix="/api/v1")
     app.include_router(equipment_router, prefix="/api/v1")
+    app.include_router(documents_router, prefix="/api/v1")
 
     return app
 

@@ -27,6 +27,13 @@ class RAGPipeline:
     def index_size(self) -> int:
         return self._store.index_size
 
+    def list_documents(self, limit: int = 5) -> dict:
+        return {
+            "total": self._store.count_documents(),
+            "chunks": self._store.index_size,
+            "recent": self._store.list_documents(limit),
+        }
+
     def ingest(self, pdf_path: Path, original_filename: str | None = None) -> dict:
         start = time.perf_counter()
         doc_id = str(uuid.uuid4())

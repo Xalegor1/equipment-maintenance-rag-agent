@@ -1,6 +1,6 @@
 import streamlit as st
 
-from frontend.utils import ingest_pdf
+from frontend.utils import get_documents, ingest_pdf
 
 
 def render_sidebar() -> str:
@@ -42,4 +42,30 @@ def render_sidebar() -> str:
             except Exception as exc:
                 st.sidebar.error(f"Ошибка загрузки: {exc}")
 
+    _render_knowledge_base()
+
     return mode
+
+
+def _render_knowledge_base() -> None:
+    st.sidebar.divider()
+    st.sidebar.subheader("База знаний")
+
+    data = get_documents(limit=5)
+    total = data.get("total", 0)
+    chunks = data.get("chunks", 0)
+    recent = data.get("recent", [])
+
+    c1, c2 = st.sidebar.columns(2)
+    c1.metric("Документов", total)
+    c2.metric("Фрагментов", chunks)
+
+    if not recent:
+        st.sidebar.caption("База знаний пуста — загрузите документ выше.")
+        return
+
+    st.sidebar.caption(f"Последние загруженные ({len(recent)}):")
+    for doc in recent:
+        name = doc.get("source", "без имени")
+        short = name if len(name) <= 38 else name[:35] + "…"
+        st.sidebar.markdown(f"📄 **{short}**  \n_{doc.get('chunk_count', 0)} фрагм._")

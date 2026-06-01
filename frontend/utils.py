@@ -56,6 +56,17 @@ def ask_question(question: str, top_k: int = 4) -> dict:
         raise RuntimeError(_TIMEOUT_ERROR) from None
 
 
+def get_documents(limit: int = 5) -> dict:
+    """Состояние базы знаний: GET /api/v1/documents."""
+    try:
+        with httpx.Client(timeout=30.0) as client:
+            response = client.get(f"{API_URL}/api/v1/documents", params={"limit": limit})
+            response.raise_for_status()
+            return response.json()
+    except Exception:
+        return {"total": 0, "chunks": 0, "recent": []}
+
+
 def ask_agent(question: str) -> dict:
     """LLM-агент (RAG + база оборудования): POST /api/v1/agent."""
     try:

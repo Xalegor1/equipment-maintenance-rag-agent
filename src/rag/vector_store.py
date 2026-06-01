@@ -22,6 +22,8 @@ class VectorStore(Protocol):
     def index_size(self) -> int: ...
     def add_documents(self, chunks: list[Document], doc_id: str | None = None) -> None: ...
     def similarity_search_with_score(self, query: str, k: int = 4) -> list[tuple[Document, float]]: ...
+    def count_documents(self) -> int: ...
+    def list_documents(self, limit: int = 5) -> list[dict]: ...
 
 
 class PgVectorStore:
@@ -137,3 +139,31 @@ class PgVectorStore:
     @property
     def index_size(self) -> int:
         return self._cached_index_size
+
+    def count_documents(self) -> int:
+        """Число уникальных загруженных документов (по doc_id)."""
+        with self._pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(DISTINCT doc_id) FROM document_chunks")
+                row = cur.fetchone()
+        return int(row[0]) if row else 0
+
+    def list_documents(self, limit: int = 5) -> list[dict]:
+        """Последние загруженные документы: имя, число фрагментов, время загрузки."""
+        with self._pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT source, COUNT(*) AS chunk_count, MIN(created_at) AS ingested_at
+                    FROM document_chunks
+                    GROUP BY doc_id, source
+                    ORDER BY ingested_at DESC
+                    LIMIT %s
+                    """,
+                    (limit,),
+                )
+                rows = cur.fetchall()
+        return [
+            {"source": src, "chunk_count": int(cnt), "ingested_at": ts.isoformat()}
+            for src, cnt, ts in rows
+        ]

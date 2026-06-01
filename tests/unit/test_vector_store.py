@@ -133,3 +133,19 @@ def test_clear_namespace_truncates(mock_store):
     executed_sql = " ".join(str(c.args[0]) for c in cursor.execute.call_args_list)
     assert "TRUNCATE" in executed_sql.upper()
     assert store.index_size == 0
+
+
+def test_count_documents(mock_store):
+    store, cursor, _ = mock_store
+    cursor.fetchone.return_value = (3,)
+    assert store.count_documents() == 3
+
+
+def test_list_documents(mock_store):
+    from datetime import datetime
+    store, cursor, _ = mock_store
+    cursor.fetchall.return_value = [("РД.pdf", 399, datetime(2026, 6, 1, 12, 0, 0))]
+    docs = store.list_documents(5)
+    assert docs[0]["source"] == "РД.pdf"
+    assert docs[0]["chunk_count"] == 399
+    assert docs[0]["ingested_at"].startswith("2026-06-01")
