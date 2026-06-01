@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # RAG pipeline
     chunk_size: int = 1500
     chunk_overlap: int = 300
-    retrieval_top_k: int = 4
+    retrieval_top_k: int = 6
     retrieval_score_threshold: float = 0.35
 
     # LLM-агент
