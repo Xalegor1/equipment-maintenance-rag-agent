@@ -9,7 +9,7 @@ from src.rag.loader import load_pdf
 from src.rag.retriever import Retriever
 from src.rag.vector_store import PgVectorStore, VectorStore
 
-_MAX_CHUNKS = 500
+_MAX_CHUNKS = 2000
 
 
 class RAGPipeline:

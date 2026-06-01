@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
 
-_MAX_PAGES = 200
+_MAX_PAGES = 500
 
 
 def clean_gost_text(text: str) -> str:
