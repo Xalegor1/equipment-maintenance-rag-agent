@@ -5,6 +5,8 @@
 """
 from __future__ import annotations
 
+from datetime import date
+
 import psycopg
 from langchain_core.tools import BaseTool, tool
 
@@ -49,11 +51,17 @@ def make_tools(
         if rec is None:
             return f"Оборудование с идентификатором '{clean_id}' не найдено в базе."
 
+        # Считаем «возраст» последнего осмотра сами — gpt-4o-mini плохо считает даты
+        days = (date.today() - rec.last_inspection_date).days
+        months = days // 30
+        since = f"{months} мес. ({days} дн.) назад" if days >= 0 else "дата в будущем"
+
         return (
             f"Идентификатор: {rec.equipment_id}\n"
             f"Тип: {rec.type}\n"
             f"Дата ввода в эксплуатацию: {rec.commissioned_date.isoformat()}\n"
-            f"Дата последнего осмотра: {rec.last_inspection_date.isoformat()}\n"
+            f"Дата последнего осмотра: {rec.last_inspection_date.isoformat()} "
+            f"(сегодня {date.today().isoformat()}, то есть {since})\n"
             f"Статус: {rec.status}\n"
             f"Расположение: {rec.location or 'не указано'}"
         )

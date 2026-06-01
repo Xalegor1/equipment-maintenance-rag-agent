@@ -1,14 +1,19 @@
-"""Сборка ReAct-агента на базе LangChain AgentExecutor."""
+"""Сборка агента на нативных вызовах функций OpenAI (tool-calling).
+
+Tool-calling надёжнее текстового ReAct для gpt-4o-mini: нет хрупкого парсинга
+формата Action/Observation, поэтому агент не зацикливается из-за «забытого»
+префикса Final Answer. Трейс шагов по-прежнему доступен через intermediate_steps.
+"""
 from __future__ import annotations
 
 from datetime import date
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_core.prompts import PromptTemplate
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
-from src.agent.prompt import REACT_PROMPT
+from src.agent.prompt import SYSTEM_PROMPT
 from src.rag.config import Settings
 
 
@@ -20,16 +25,17 @@ def build_agent(tools: list[BaseTool], settings: Settings) -> AgentExecutor:
         max_retries=settings.openai_max_retries,
         request_timeout=30,
     )
-    prompt_text = REACT_PROMPT.replace("__TODAY__", date.today().isoformat())
-    prompt = PromptTemplate.from_template(prompt_text)
-    # create_react_agent добавляет stop=["\nObservation"], чтобы модель не «дописывала»
-    # наблюдения за инструменты (важно для надёжности gpt-4o-mini).
-    agent = create_react_agent(llm, tools, prompt)
+    system = SYSTEM_PROMPT.replace("__TODAY__", date.today().isoformat())
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system),
+        ("human", "{input}"),
+        MessagesPlaceholder("agent_scratchpad"),
+    ])
+    agent = create_tool_calling_agent(llm, tools, prompt)
     return AgentExecutor(
         agent=agent,
         tools=tools,
         max_iterations=settings.agent_max_iterations,
-        handle_parsing_errors=True,
         return_intermediate_steps=True,
         verbose=False,
     )

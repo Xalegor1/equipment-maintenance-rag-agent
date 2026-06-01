@@ -42,8 +42,12 @@ class AgentService:
         tools_used: list[str] = []
         for action, observation in steps:
             tool_name = getattr(action, "tool", "")
-            tool_input = getattr(action, "tool_input", "")
-            log = getattr(action, "log", "").strip()
+            raw_input = getattr(action, "tool_input", "")
+            if isinstance(raw_input, dict):
+                tool_input = ", ".join(f"{k}={v}" for k, v in raw_input.items())
+            else:
+                tool_input = str(raw_input)
+            log = str(getattr(action, "log", "") or "").strip()
             if log:
                 trace.append({"type": "thought", "content": log})
             trace.append({
