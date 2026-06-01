@@ -14,12 +14,17 @@ CREATE TABLE document_chunks (
     page       INTEGER NOT NULL DEFAULT 0,   -- номер страницы (1-индекс)
     text       TEXT NOT NULL,                -- содержимое чанка
     embedding  vector(1536) NOT NULL,        -- OpenAI text-embedding-3-small
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- Лексический индекс для гибридного поиска (русский стеммер), считается автоматически
+    tsv        tsvector GENERATED ALWAYS AS (to_tsvector('russian', text)) STORED
 );
 
 -- HNSW-индекс для косинусного поиска (оператор <=>)
 CREATE INDEX idx_chunks_embedding ON document_chunks
     USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
+
+-- GIN-индекс для полнотекстового (лексического) поиска — гибрид dense + FTS
+CREATE INDEX idx_chunks_tsv ON document_chunks USING GIN (tsv);
 
 -- Для фильтрации/удаления по документу
 CREATE INDEX idx_chunks_doc_id ON document_chunks (doc_id);

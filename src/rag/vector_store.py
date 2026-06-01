@@ -14,6 +14,10 @@ _EMBEDDING_DIMS: dict[str, int] = {
     "text-embedding-ada-002": 1536,
 }
 
+# Гибридный поиск (dense + лексический FTS) с фьюзингом по Reciprocal Rank Fusion.
+_HYBRID_POOL = 40  # сколько кандидатов берём из каждой ветки до фьюзинга
+_RRF_K = 60        # сглаживающая константа RRF (стандартное значение)
+
 
 class VectorStore(Protocol):
     @property
@@ -102,18 +106,62 @@ class PgVectorStore:
     def similarity_search_with_score(
         self, query: str, k: int = 4
     ) -> list[tuple[Document, float]]:
+        """Гибридный поиск: dense (pgvector) + лексический (русский FTS), фьюзинг по RRF.
+
+        Порядок результатов — по RRF (лексический сигнал «спасает» куски, которые векторный
+        поиск размывает из-за шумных слов в запросе). В score возвращаем косинусную близость
+        (для порога в Retriever и отображения «релевантность %» во фронтенде).
+        """
         query_vector = self._vec_literal(self._embedder.embed_query(query))
 
         with self._pool.connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT text, source, page, (1 - (embedding <=> %s::vector)) AS score
-                    FROM document_chunks
-                    ORDER BY embedding <=> %s::vector
-                    LIMIT %s
+                    WITH q AS (
+                        SELECT %(qvec)s::vector AS qv,
+                               -- OR по леммам запроса: любой совпавший термин даёт вклад,
+                               -- ts_rank_cd вознаграждает частоту/полноту совпадений.
+                               -- (AND-семантика websearch_to_tsquery отсекала бы куски,
+                               --  где нет шумных слов вроде «масляный/силовой».)
+                               to_tsquery('russian', array_to_string(
+                                   tsvector_to_array(to_tsvector('russian', %(qtext)s)), ' | '
+                               )) AS tsq
+                    ),
+                    semantic AS (
+                        SELECT dc.id, ROW_NUMBER() OVER (ORDER BY dc.embedding <=> q.qv) AS rnk
+                        FROM document_chunks dc, q
+                        ORDER BY dc.embedding <=> q.qv
+                        LIMIT %(pool)s
+                    ),
+                    lexical AS (
+                        SELECT dc.id, ROW_NUMBER() OVER (ORDER BY ts_rank_cd(dc.tsv, q.tsq) DESC) AS rnk
+                        FROM document_chunks dc, q
+                        WHERE q.tsq IS NOT NULL AND dc.tsv @@ q.tsq
+                        ORDER BY ts_rank_cd(dc.tsv, q.tsq) DESC
+                        LIMIT %(pool)s
+                    ),
+                    fused AS (
+                        SELECT COALESCE(s.id, l.id) AS id,
+                               COALESCE(1.0 / (%(rrfk)s + s.rnk), 0)
+                             + COALESCE(1.0 / (%(rrfk)s + l.rnk), 0) AS rrf
+                        FROM semantic s
+                        FULL OUTER JOIN lexical l ON s.id = l.id
+                    )
+                    SELECT dc.text, dc.source, dc.page,
+                           (1 - (dc.embedding <=> q.qv)) AS score
+                    FROM fused f
+                    JOIN document_chunks dc ON dc.id = f.id, q
+                    ORDER BY f.rrf DESC
+                    LIMIT %(topk)s
                     """,
-                    (query_vector, query_vector, k),
+                    {
+                        "qvec": query_vector,
+                        "qtext": query,
+                        "pool": _HYBRID_POOL,
+                        "rrfk": _RRF_K,
+                        "topk": k,
+                    },
                 )
                 results = cur.fetchall()
 
