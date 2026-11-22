@@ -132,7 +132,7 @@
 
 ### B. LLM-агенты с tools для БД и документов
 
-**[4] langchain-ai/langchain-postgres** (официальный). https://github.com/langchain-ai/langchain-postgres. Канонические абстракции LangChain для Postgres: PGEngine, PGVectorStore, PostgresChatMessageHistory. **Обязательно цитировать в курсовой**.
+**[4] langchain-ai/langchain-postgres** (официальный). https://github.com/langchain-ai/langchain-postgres. Канонические абстракции LangChain для Postgres: PGEngine, PGVectorStore, PostgresChatMessageHistory. **Обязательно цитировать**.
 
 **[5] JonathanJourney99/Postgres-SQL-Agent-Langchain.** https://github.com/JonathanJourney99/Postgres-SQL-Agent-Langchain. LangChain create_sql_agent + PostgreSQL + SQLAlchemy. Образец tool-агента, ходящего в реляционную БД (журнал ТО).
 
@@ -282,7 +282,7 @@
 
 **[25] Stepik. LangChain/LangGraph — Создание AI-агентов на Python + RAG + MCP.** https://stepik.org/course/241341/promo. ReAct, LangGraph Studio.
 
-**[26] Stepik. Создание AI-ассистентов для ИТ-инфраструктуры (LLM, RAG, agents).** https://stepik.org/course/248396/promo. **Методически очень близко к курсовой**.
+**[26] Stepik. Создание AI-ассистентов для ИТ-инфраструктуры (LLM, RAG, agents).** https://stepik.org/course/248396/promo. **Методически очень близко**.
 
 **[27] AI Talent Hub (ИТМО). LLM-курс.** https://ai.itmo.ru/llm и https://llmcourse.tech. PyTorch, HuggingFace, vLLM, RAG, агенты.
 
@@ -316,9 +316,9 @@
 
 **8. Цифрум АтомМайнд (ГК Росатом, Россия)**. https://www.rosatom.ru/production/supercomputer-and-software/tsifrovye-produkty/. Платформа цифровизации с предиктивной аналитикой. С 2025 г. развивает GenAI совместно с НИЯУ МИФИ. **Отличия**: внутренний продукт Росатома, классический ML на телеметрии; проект студента — LLM-агент на знаниях/документах.
 
-**9. PrivateGPT (Zylon, open-source, Apache 2.0)**. https://github.com/zylon-ai/private-gpt. ⭐ **Стек практически идентичен**: FastAPI + Python + LlamaIndex + векторная БД. **Отличия**: общий фреймворк vs специализированная DSS у студента; PrivateGPT — «движок», проект — приложение поверх (бизнес-логика, роли инженера/диспетчера). **Обязательно показать в курсовой как самый близкий технологический референс**.
+**9. PrivateGPT (Zylon, open-source, Apache 2.0)**. https://github.com/zylon-ai/private-gpt. ⭐ **Стек практически идентичен**: FastAPI + Python + LlamaIndex + векторная БД. **Отличия**: общий фреймворк vs специализированная DSS у студента; PrivateGPT — «движок», проект — приложение поверх (бизнес-логика, роли инженера/диспетчера). **Обязательно показать как самый близкий технологический референс**.
 
-**10. Verba: The Golden RAGtriever (Weaviate, open-source BSD-3)**. https://github.com/weaviate/Verba. ⭐ **Стек идентичен**: FastAPI + React + Anthropic Claude + векторная БД. **Отличия**: нет агентских функций (tool calling, multi-step reasoning) — у студента есть LangChain-агенты; pgvector проще чем Weaviate; отсутствует предметная онтология ТО. **Почти идентичный технологический референс — обязателен в курсовой**.
+**10. Verba: The Golden RAGtriever (Weaviate, open-source BSD-3)**. https://github.com/weaviate/Verba. ⭐ **Стек идентичен**: FastAPI + React + Anthropic Claude + векторная БД. **Отличия**: нет агентских функций (tool calling, multi-step reasoning) — у студента есть LangChain-агенты; pgvector проще чем Weaviate; отсутствует предметная онтология ТО. **Почти идентичный технологический референс — обязателен**.
 
 ### Сравнительная таблица аналогов
 
