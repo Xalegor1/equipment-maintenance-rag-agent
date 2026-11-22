@@ -1,48 +1,30 @@
 # Secrets
 .env
 
-# Vector store and ML artifacts
-mlruns/
-data/raw/
-
-# Корпус документации (большие PDF ГОСТ/РД — пользователь добавляет сам)
-data/docs/*.pdf
-
-# Временные скрипты
-_*.py
-
 # Python
 __pycache__/
 *.py[cod]
 *.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.venv/
+venv/
 dist/
 build/
 *.egg
-
-# Coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
+.coverage.*
 htmlcov/
 
-# OS
+# Локальные артефакты и данные
+data/raw/
+mlruns/
+cache.*.db
+*.db
+
+# OS / IDE
 .DS_Store
 Thumbs.db
-
-# IDE
 .vscode/
 .idea/
-
-
-# venv 
-.venv/
-
-# docs
-docs/
-
-# Images
-images/
-
-# faiss_index
-faiss_index/
