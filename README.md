@@ -1,5 +1,6 @@
 # ИСППР по обслуживанию оборудования — LLM-агент + RAG
 
+[![CI](https://github.com/Xalegor1/equipment-maintenance-rag-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Xalegor1/equipment-maintenance-rag-agent/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11+-blue)
 ![Tests](https://img.shields.io/badge/tests-60%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
