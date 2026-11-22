@@ -40,8 +40,8 @@ Streamlit (UI)  →  FastAPI
                           PostgreSQL + pgvector (документы + оборудование)
 ```
 
-Подробнее — в [docs/architecture.md](docs/architecture.md) и в курсовой работе
-[docs/Курсовая_работа_RAG_Еловенко.docx](docs/Курсовая_работа_RAG_Еловенко.docx).
+Подробнее — в [docs/architecture.md](docs/architecture.md) и
+[docs/analogues.md](docs/analogues.md).
 
 ## Стек
 
@@ -121,7 +121,7 @@ frontend/         # Streamlit
 docker/init.sql   # схема БД и seed оборудования
 configs/          # YAML-конфиги экспериментов по chunk_size
 tests/            # unit + integration (60 тестов)
-docs/             # курсовая, шпаргалки, архитектура
+docs/             # архитектура и обзор аналогов
 ```
 
 ## Данные

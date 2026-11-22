@@ -1,10 +1,10 @@
-# Материалы для курсовой работы: ИСППР на основе LLM-агента для ТО высоковольтного оборудования
+# Обзор аналогов и литературы: ИСППР на основе LLM-агента для ТО высоковольтного оборудования
 
 Ниже — структурированный отчёт по 7 разделам с конкретными источниками, ссылками и рекомендациями. Все материалы подобраны под стек Python + FastAPI + LangChain + PostgreSQL/pgvector + React + Claude API и предметную область — техническое обслуживание (ТО) высоковольтного электрооборудования.
 
 ---
 
-## 1. Похожие курсовые и дипломные работы
+## 1. Похожие работы
 
 ### Российские ВУЗы — ВКР и магистерские диссертации
 
@@ -34,7 +34,7 @@
 
 **12. «Теория принятия решений и управление рисками. Модели конфликтов, неопределённости, риска» (СПбПУ, учеб. пособие)** — https://elib.spbstu.ru/dl/2/344.pdf/info. Базовая литература для теоретической главы по СППР.
 
-### GitHub-репозитории как референсы курсовых проектов
+### GitHub-репозитории как референсы
 
 - **mpashkovskiy/ru-rag** — RAG-pipeline для русского языка с sentence-transformers/paraphrase-multilingual-mpnet-base-v2: https://github.com/mpashkovskiy/ru-rag
 - **alexeygrigorev/llm-rag-workshop** — Elasticsearch + Ollama + Streamlit: https://github.com/alexeygrigorev/llm-rag-workshop
@@ -48,7 +48,7 @@
 
 **[1] Harbola C., Purwar A. PARAM: Prescriptive Agents based on RAG for Automated Maintenance.** arXiv:2508.04714, 2025. https://arxiv.org/abs/2508.04714. Трёхуровневая архитектура: обнаружение аномалий → контекстный RAG-поиск → прескриптивные рекомендации. **Эталонная архитектура** «LLM-агент + RAG для обслуживания» — ближайший прямой аналог проекта.
 
-**[2] Tao L., Huang Q., Wu X., et al. LLM-R: A Framework for Domain-Adaptive Maintenance Scheme Generation Combining Hierarchical Agents and RAG.** arXiv:2411.04476, 2024 (Beihang Univ., NTU). https://arxiv.org/abs/2411.04476. Иерархические агенты + RAG, технология LORA-KR loss. Соответствует теме курсовой почти 1-в-1.
+**[2] Tao L., Huang Q., Wu X., et al. LLM-R: A Framework for Domain-Adaptive Maintenance Scheme Generation Combining Hierarchical Agents and RAG.** arXiv:2411.04476, 2024 (Beihang Univ., NTU). https://arxiv.org/abs/2411.04476. Иерархические агенты + RAG, технология LORA-KR loss. Соответствует теме почти 1-в-1.
 
 **[3] Meng H., et al. From Prediction to Prescription: Large Language Model Agent for Context-Aware Maintenance Decision Support.** Proc. PHME (PHM Society Europe), 2024. https://papers.phmsociety.org/index.php/phme/article/download/4114/2428. Агент на GPT-4 + RAG + классификатор неисправностей; кейс — линейный актуатор. Точная схема «диагностика → RAG → LLM-агент → СППР».
 
@@ -64,7 +64,7 @@
 
 **[8] Alawadhi S., Abbas N. Optimizing Retrieval-Augmented Generation for Electrical Engineering: A Case Study on ABB Circuit Breakers.** arXiv:2505.17520, 2025 (Univ. of Leeds). https://arxiv.org/abs/2505.17520. ⭐ **Прямое попадание**: RAG + Claude API + высоковольтное оборудование (выключатели ABB). Сравнение GPT-4o, Cohere, Claude. **Ключевая статья**.
 
-**[9] Khan A.A., Hasan M.T., Kemell K.K., Rasku J., Abrahamsson P. Developing Retrieval Augmented Generation (RAG) based LLM Systems from PDFs: An Experience Report.** arXiv:2410.15944, 2024. https://arxiv.org/abs/2410.15944. End-to-end пайплайн RAG из PDF — типовая задача курсовой.
+**[9] Khan A.A., Hasan M.T., Kemell K.K., Rasku J., Abrahamsson P. Developing Retrieval Augmented Generation (RAG) based LLM Systems from PDFs: An Experience Report.** arXiv:2410.15944, 2024. https://arxiv.org/abs/2410.15944. End-to-end пайплайн RAG из PDF — типовая задача.
 
 **[10] Application of retrieval-augmented generation for interactive industrial knowledge management via a large language model.** Computer Standards & Interfaces, Elsevier, 2025. https://www.sciencedirect.com/science/article/pii/S0920548925000248. RAG для индустриального управления знаниями: BM25+эмбеддинги, MRR=88%, recall=85%.
 
@@ -336,15 +336,15 @@
 | **Verba (Weaviate)** | **Open-source** | Claude/OpenAI/Ollama | Гибко | **Бесплатно** |
 | **🎓 Проект студента** | **Open-source (учебный)** | **Claude API (опц. GigaChat)** | **Да (ГОСТы РФ)** | **Бесплатно** |
 
-### Ключевые выводы для курсовой
+### Ключевые выводы
 
 **Уникальность проекта в матрице конкурентов**: (1) узкая специализация на ВВ-оборудовании как у Hitachi Lumada, но open-source; (2) российская нормативная база (ГОСТ, ПТЭЭП, РД), тогда как западные ориентированы на IEEE/IEC, а GigaChat/YandexGPT — универсальные модели без готовой DSS; (3) современный LLM-агентский стек (LangChain + Claude + pgvector); (4) доступность — все enterprise-аналоги недоступны или дороги в 2026 для среднего российского предприятия из-за санкций; (5) простота развёртывания — FastAPI/PostgreSQL не требуют Kubernetes/OpenShift.
 
 ---
 
-## 7. Структура курсовой и список литературы
+## 7. Структура документа и список литературы
 
-### Типовая структура курсовой работы (для УУНиТ, ИСиТ, 4 семестр)
+### Типовая структура документа (для УУНиТ, ИСиТ, 4 семестр)
 
 **Введение** (3-5 стр.): актуальность, цель, задачи, объект, предмет, методы, практическая значимость, структура работы.
 
